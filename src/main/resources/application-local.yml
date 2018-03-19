@@ -1,0 +1,11 @@
+spring:
+  redis:
+    host: 127.0.0.1
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  datasource:
+    username: root
+    password: rjs123
+    url: jdbc:mysql://127.0.0.1:3306/data?characterEncoding=UTF-8
