@@ -41,7 +41,12 @@ public class DaoSecurityMetadataSource implements SecurityMetadataSource {
 
   @Override
   public Collection<ConfigAttribute> getAllConfigAttributes() {
-    return null;
+    if (ROLE_RESOURCE_MAP == null) {
+      reloadResourceDefine();
+    }
+    Collection<ConfigAttribute> configAttributes=new ArrayList<>();
+    ROLE_RESOURCE_MAP.values().stream().map(configAttributes::addAll);
+    return configAttributes;
   }
 
   // 此方法是为了判定用户请求的url 是否在权限表中，如果在权限表中，则返回给 decide 方法，用来判定用户是否有此权限。如果不在权限表中则放行。
