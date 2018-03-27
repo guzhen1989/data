@@ -9,6 +9,8 @@ spring:
     username: root
     password: rjs123
     url: jdbc:mysql://172.16.88.216:3306/data?characterEncoding=UTF-8
+  session:
+    store-type: redis
 logging:
   level:
     org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: debug

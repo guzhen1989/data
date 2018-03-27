@@ -1,6 +1,7 @@
 package com.xg.api.model.uc;
 
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -28,7 +29,7 @@ public class User {
   @Column(length = 64)
   private String password;
 
-  @ManyToMany
+  @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(
     name = "user_role_ref",
     joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},

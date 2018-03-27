@@ -10,4 +10,7 @@ import org.springframework.stereotype.Repository;
  * @date 2018/3/19
  */
 @Repository
-public interface PermissionRepository extends JpaRepository<Permission, Integer> {}
+public interface PermissionRepository extends JpaRepository<Permission, Integer> {
+
+  Permission findByName(String name);
+}

@@ -16,6 +16,7 @@ import org.springframework.security.access.SecurityMetadataSource;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
@@ -26,26 +27,25 @@ import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
  * @date 2018/3/19
  */
 @Service
+@Transactional
 public class DaoSecurityMetadataSource implements SecurityMetadataSource {
 
   private static final String HANDLER_MAPPING_INTROSPECTOR_BEAN_NAME =
       "mvcHandlerMappingIntrospector";
+  private static HashMap<com.xg.api.model.uc.Resource, Collection<ConfigAttribute>>
+      ROLE_RESOURCE_MAP = null;
   @Resource private ApplicationContext applicationContext;
-
   @Resource private RoleRepository roleRepository;
 
-  private static HashMap<com.xg.api.model.uc.Resource, Collection<ConfigAttribute>> ROLE_RESOURCE_MAP =
-      null;
-
-  //TODO 权限修改是重新加载权限
+  // TODO 权限修改是重新加载权限
 
   @Override
   public Collection<ConfigAttribute> getAllConfigAttributes() {
     if (ROLE_RESOURCE_MAP == null) {
       reloadResourceDefine();
     }
-    Collection<ConfigAttribute> configAttributes=new ArrayList<>();
-    ROLE_RESOURCE_MAP.values().stream().map(configAttributes::addAll);
+    Collection<ConfigAttribute> configAttributes = new ArrayList<>();
+    ROLE_RESOURCE_MAP.values().forEach(configAttributes::addAll);
     return configAttributes;
   }
 
@@ -58,11 +58,11 @@ public class DaoSecurityMetadataSource implements SecurityMetadataSource {
     // object 中包含用户请求的request 信息
     HttpServletRequest request = ((FilterInvocation) object).getHttpRequest();
     MvcRequestMatcher matcher;
-    String resUrl;
+    HandlerMappingIntrospector introspector =
+        this.applicationContext.getBean(
+            HANDLER_MAPPING_INTROSPECTOR_BEAN_NAME, HandlerMappingIntrospector.class);
     for (com.xg.api.model.uc.Resource resource : ROLE_RESOURCE_MAP.keySet()) {
-      HandlerMappingIntrospector introspector =
-          this.applicationContext.getBean(
-              HANDLER_MAPPING_INTROSPECTOR_BEAN_NAME, HandlerMappingIntrospector.class);
+
       matcher = new MvcRequestMatcher(introspector, resource.getUrl());
       if (resource.getMethod() != null) {
         matcher.setMethod(resource.getMethod());
@@ -94,7 +94,7 @@ public class DaoSecurityMetadataSource implements SecurityMetadataSource {
         }
       }
     }
-    ROLE_RESOURCE_MAP=map;
+    ROLE_RESOURCE_MAP = map;
   }
 
   @Override

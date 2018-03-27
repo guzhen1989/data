@@ -37,6 +37,18 @@ public class Permission {
   )
   private List<Resource> resources;
 
+  @ManyToOne
+  @JoinColumn(name = "permission_id",referencedColumnName = "id")
+  private Permission permission;
+
+  public Permission getPermission() {
+    return permission;
+  }
+
+  public void setPermission(Permission permission) {
+    this.permission = permission;
+  }
+
   public List<Resource> getResources() {
     return resources;
   }

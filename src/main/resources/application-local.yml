@@ -9,3 +9,5 @@ spring:
     username: root
     password: rjs123
     url: jdbc:mysql://127.0.0.1:3306/data?characterEncoding=UTF-8
+  session:
+    store-type: jdbc

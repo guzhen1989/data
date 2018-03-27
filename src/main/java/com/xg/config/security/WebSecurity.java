@@ -2,10 +2,11 @@ package com.xg.config.security;
 
 import javax.annotation.Resource;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 
 /**
@@ -22,27 +23,24 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
   @Resource private UserDetailService userDetailService;
 
+  @Resource private BCryptPasswordEncoder bCryptPasswordEncoder;
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.csrf()
-        .disable()
-        .authorizeRequests()
-        .antMatchers("/", "/home")
-        .permitAll()
+    http.authorizeRequests()
         .anyRequest()
-        .authenticated()
+        .permitAll() //所有请求通过
         .and()
         .formLogin()
-        .loginPage("/login")
-        .permitAll()
+        .loginProcessingUrl("/api/login")
         .and()
-        .logout()
-        .permitAll();
-    http.addFilterAt(securityInterceptorFilter, FilterSecurityInterceptor.class);
+        .csrf()
+        .disable();
+    http.addFilterBefore(securityInterceptorFilter, FilterSecurityInterceptor.class);
   }
 
   @Override
-  protected UserDetailsService userDetailsService() {
-    return userDetailService;
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.userDetailsService(userDetailService).passwordEncoder(bCryptPasswordEncoder);
   }
 }
