@@ -1,5 +1,7 @@
 package com.xg.api.model.uc;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +19,7 @@ import javax.persistence.ManyToOne;
  * @date 2018/3/19
  */
 @Entity
-public class Permission {
+public class Permission implements Serializable {
   @Id @GeneratedValue private Integer id;
 
   @Column(length = 32)
@@ -25,6 +27,7 @@ public class Permission {
 
   @Column private String description;
 
+  @JsonIgnore
   @ManyToOne
   @JoinColumn(name = "role_id", referencedColumnName = "id")
   private Role role;

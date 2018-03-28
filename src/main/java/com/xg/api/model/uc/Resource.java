@@ -1,5 +1,7 @@
 package com.xg.api.model.uc;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +20,7 @@ import org.springframework.http.HttpMethod;
  * @date 2018/3/19
  */
 @Entity
-public class Resource {
+public class Resource implements Serializable {
   @Id @GeneratedValue private Integer id;
 
   @Column(length = 32)
@@ -30,6 +32,7 @@ public class Resource {
   @Enumerated(EnumType.STRING)
   private HttpMethod method;
 
+  @JsonIgnore
   @ManyToMany(mappedBy = "resources")
   private List<Permission> permissions;
 

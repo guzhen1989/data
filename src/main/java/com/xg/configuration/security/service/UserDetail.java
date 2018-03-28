@@ -1,7 +1,8 @@
-package com.xg.config.security;
+package com.xg.configuration.security.service;
 
 import com.xg.api.model.uc.Role;
 import com.xg.api.model.uc.User;
+import com.xg.api.model.uc.UserRoleRef;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,8 +22,8 @@ public class UserDetail implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> list = new ArrayList<>();
-        for (Role role : user.getRoles()) {
-            list.add(new SimpleGrantedAuthority(role.getCode()));
+        for (UserRoleRef userRoleRef : user.getUserRoleRefs()) {
+            list.add(new SimpleGrantedAuthority(userRoleRef.getRole().getCode()));
         }
         return list;
     }

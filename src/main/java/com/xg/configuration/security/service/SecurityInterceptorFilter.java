@@ -1,4 +1,4 @@
-package com.xg.config.security;
+package com.xg.configuration.security.service;
 
 import javax.annotation.Resource;
 import org.springframework.beans.factory.InitializingBean;

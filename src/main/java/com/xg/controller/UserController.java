@@ -30,10 +30,10 @@ public class UserController {
     userRepository.save(user);
     return user;
   }
-  @GetMapping()
-  public User getUser(@RequestBody User user) {
-    userRepository.findByUsername(user.getUsername());
-    return user;
+  @GetMapping("/{id}")
+  public User getUser(@PathVariable("id") Integer id) {
+    Optional<User> byId = userRepository.findById(id);
+    return byId.get();
   }
 
   @Perms({@Perm(name = "权限一")})

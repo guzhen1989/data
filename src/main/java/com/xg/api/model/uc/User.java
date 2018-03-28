@@ -1,5 +1,6 @@
 package com.xg.api.model.uc;
 
+import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 /**
  * 用户
@@ -18,9 +20,9 @@ import javax.persistence.ManyToMany;
  * @date 2018/3/19
  */
 @Entity
-public class User {
+public class User implements Serializable{
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue
   private Integer id;
 
   @Column(length = 32, unique = true, nullable = false)
@@ -29,20 +31,15 @@ public class User {
   @Column(length = 64)
   private String password;
 
-  @ManyToMany(cascade = CascadeType.ALL)
-  @JoinTable(
-    name = "user_role_ref",
-    joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-    inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")}
-  )
-  private List<Role> roles;
+  @OneToMany(mappedBy = "user")
+  private List<UserRoleRef> userRoleRefs;
 
-  public List<Role> getRoles() {
-    return roles;
+  public List<UserRoleRef> getUserRoleRefs() {
+    return userRoleRefs;
   }
 
-  public void setRoles(List<Role> roles) {
-    this.roles = roles;
+  public void setUserRoleRefs(List<UserRoleRef> userRoleRefs) {
+    this.userRoleRefs = userRoleRefs;
   }
 
   public Integer getId() {

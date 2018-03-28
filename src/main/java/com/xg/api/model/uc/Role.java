@@ -1,6 +1,10 @@
 package com.xg.api.model.uc;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.io.Serializable;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +18,7 @@ import javax.persistence.OneToMany;
  * @date 2018/3/19
  */
 @Entity
-public class Role {
+public class Role implements Serializable {
   @Id
   @GeneratedValue
   private Integer id;
@@ -24,10 +28,21 @@ public class Role {
   private String code;
   @Column
   private String description;
-  @ManyToMany(mappedBy = "roles")
-  private List<User> users;
+
   @OneToMany(mappedBy = "role")
   private List<Permission> permissions;
+
+  @OneToMany(mappedBy = "role")
+  @JsonBackReference
+  private List<UserRoleRef> userRoleRefs;
+
+  public List<UserRoleRef> getUserRoleRefs() {
+    return userRoleRefs;
+  }
+
+  public void setUserRoleRefs(List<UserRoleRef> userRoleRefs) {
+    this.userRoleRefs = userRoleRefs;
+  }
 
   public String getCode() {
     return code;
@@ -69,11 +84,4 @@ public class Role {
     this.description = description;
   }
 
-  public List<User> getUsers() {
-    return users;
-  }
-
-  public void setUsers(List<User> users) {
-    this.users = users;
-  }
 }

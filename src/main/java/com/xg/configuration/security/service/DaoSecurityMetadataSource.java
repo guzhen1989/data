@@ -1,4 +1,4 @@
-package com.xg.config.security;
+package com.xg.configuration.security.service;
 
 import com.xg.api.model.uc.Permission;
 import com.xg.api.model.uc.Role;

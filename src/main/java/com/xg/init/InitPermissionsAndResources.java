@@ -1,4 +1,4 @@
-package com.xg.config;
+package com.xg.init;
 
 import com.xg.annotation.Perm;
 import com.xg.annotation.Perms;
@@ -8,13 +8,14 @@ import com.xg.repository.PermissionRepository;
 import com.xg.repository.ResourceRepository;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -42,14 +43,6 @@ public class InitPermissionsAndResources {
     }
     permissionRepository.save(permission);
     return permission;
-  }
-
-  @PostConstruct
-  public void init() {
-    Map<RequestMappingInfo, HandlerMethod> handlerMethods =
-        requestMappingHandlerMapping.getHandlerMethods();
-    initResources(handlerMethods);
-    initPermissions(handlerMethods);
   }
 
   private void initPermissions(Map<RequestMappingInfo, HandlerMethod> handlerMethods) {
@@ -83,6 +76,7 @@ public class InitPermissionsAndResources {
                                     list = new ArrayList<>();
                                   }
                                   list.add(resource);
+                                  list = new ArrayList<>(new HashSet<>(list));
                                   permission.setResources(list);
                                 });
                       });
@@ -90,6 +84,14 @@ public class InitPermissionsAndResources {
             }
           }
         });
+  }
+
+  @Transactional
+  public void initPermissionsAndResources() {
+    Map<RequestMappingInfo, HandlerMethod> handlerMethods =
+        requestMappingHandlerMapping.getHandlerMethods();
+    initResources(handlerMethods);
+    initPermissions(handlerMethods);
   }
 
   private void initResources(Map<RequestMappingInfo, HandlerMethod> handlerMethods) {

@@ -1,4 +1,4 @@
-package com.xg.config.security;
+package com.xg.configuration.security.service;
 
 import java.util.Collection;
 import org.springframework.security.access.AccessDecisionManager;
