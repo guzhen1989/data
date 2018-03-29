@@ -1,5 +1,6 @@
 package com.xg.configuration.security;
 
+import com.xg.configuration.security.service.AjaxAwareLoginUrlAuthenticationEntryPoint;
 import com.xg.configuration.security.service.JsonSimpleUrlAuthenticationFailureHandler;
 import com.xg.configuration.security.service.JsonSimpleUrlAuthenticationSuccessHandler;
 import com.xg.configuration.security.service.JsonUsernamePasswordAuthenticationFilter;
@@ -33,18 +34,24 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
   @Resource private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+  @Resource private AjaxAwareLoginUrlAuthenticationEntryPoint ajaxAwareLoginUrlAuthenticationEntryPoint;
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.exceptionHandling().authenticationEntryPoint(new Http403ForbiddenEntryPoint()).and().authorizeRequests()
+    http.exceptionHandling()
+        .authenticationEntryPoint(ajaxAwareLoginUrlAuthenticationEntryPoint)
+        .and()
+        .authorizeRequests()
         .anyRequest()
-        .permitAll() //所有请求通过
+        .permitAll() // 所有请求通过
         .and()
         .formLogin()
         .and()
         .csrf()
         .disable();
     http.addFilterBefore(securityInterceptorFilter, FilterSecurityInterceptor.class);
-    http.addFilterAt(jsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+    http.addFilterAt(
+        jsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
   }
 
   @Override
@@ -53,14 +60,15 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  JsonUsernamePasswordAuthenticationFilter jsonUsernamePasswordAuthenticationFilter() throws Exception {
-    JsonUsernamePasswordAuthenticationFilter filter = new JsonUsernamePasswordAuthenticationFilter();
+  JsonUsernamePasswordAuthenticationFilter jsonUsernamePasswordAuthenticationFilter()
+      throws Exception {
+    JsonUsernamePasswordAuthenticationFilter filter =
+        new JsonUsernamePasswordAuthenticationFilter();
     filter.setAuthenticationSuccessHandler(new JsonSimpleUrlAuthenticationSuccessHandler());
     filter.setAuthenticationFailureHandler(new JsonSimpleUrlAuthenticationFailureHandler());
-    filter.setFilterProcessesUrl("/login/self");
-    //这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，不然要自己组装AuthenticationManager
+    filter.setFilterProcessesUrl(SecurityConfiguration.LOGIN_URI);
+    // 这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，不然要自己组装AuthenticationManager
     filter.setAuthenticationManager(authenticationManagerBean());
     return filter;
   }
-
 }

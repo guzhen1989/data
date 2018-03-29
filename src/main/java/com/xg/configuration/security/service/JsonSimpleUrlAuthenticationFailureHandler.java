@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.util.matcher.ELRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 /**
  * 支持json
@@ -17,25 +19,22 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
  * @date 2018/3/28
  */
 public class JsonSimpleUrlAuthenticationFailureHandler
-    extends SimpleUrlAuthenticationFailureHandler {
+    extends SimpleUrlAuthenticationFailureHandler implements AjaxAware{
 
   @Override
   public void onAuthenticationFailure(
       HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
       throws IOException, ServletException {
-    if (MediaType.APPLICATION_JSON_VALUE.equals(request.getHeader(HttpHeaders.CONTENT_TYPE))
-        || MediaType.APPLICATION_JSON_UTF8_VALUE.equals(
-            request.getHeader(HttpHeaders.CONTENT_TYPE))) {
-      response.setHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON_UTF8_VALUE);
-      response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        /*
-         * USED if you want to AVOID redirect to LoginSuccessful.htm in JSON authentication
-         */
-      response.getWriter().print("{\"responseCode\":\"Failure\"}");
-      response.getWriter().flush();
+    if (isRestRequest(request)) {
+      if(isPreflight(request)){
+        response.sendError(HttpServletResponse.SC_NO_CONTENT);
+      }else {
+        response.setHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON_UTF8_VALUE);
+        response.sendError(HttpStatus.UNAUTHORIZED.value(),"{\"responseCode\":\"Failure\"}");
+      }
     } else {
-      // TODO Auto-generated method stub
-      super.onAuthenticationFailure(request, response, exception);
+        super.onAuthenticationFailure(request, response, exception);
     }
   }
+
 }

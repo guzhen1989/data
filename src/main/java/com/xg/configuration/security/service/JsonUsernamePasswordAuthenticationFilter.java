@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * @author guzhen
  * @date 2018/3/28
  */
-public class JsonUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class JsonUsernamePasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter implements AjaxAware{
   private static final ThreadLocal<User> LOGIN_INFO = new ThreadLocal<>();
   private final ObjectMapper mapper;
 
@@ -26,9 +26,7 @@ public class JsonUsernamePasswordAuthenticationFilter extends UsernamePasswordAu
 
   private boolean checkJson(HttpServletRequest request) {
     try {
-      if (MediaType.APPLICATION_JSON_VALUE.equals(request.getContentType())
-          || MediaType.APPLICATION_JSON_UTF8_VALUE.equals(
-              request.getContentType())) {
+      if (isRestRequest(request)) {
         if(LOGIN_INFO.get()==null) {
           User user = mapper.readValue(request.getInputStream(), User.class);
           LOGIN_INFO.set(user);
