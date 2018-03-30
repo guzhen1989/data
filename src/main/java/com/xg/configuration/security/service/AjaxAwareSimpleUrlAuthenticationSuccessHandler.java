@@ -17,7 +17,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
  * @author guzhen
  * @date 2018/3/28
  */
-public class JsonSimpleUrlAuthenticationSuccessHandler extends
+public class AjaxAwareSimpleUrlAuthenticationSuccessHandler extends
     SimpleUrlAuthenticationSuccessHandler implements AjaxAware{
 
   @Override

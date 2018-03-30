@@ -18,7 +18,7 @@ import javax.persistence.OneToMany;
  * @date 2018/3/19
  */
 @Entity
-public class Role implements Serializable {
+public class Role extends BaseModel {
   @Id
   @GeneratedValue
   private Integer id;
@@ -30,11 +30,20 @@ public class Role implements Serializable {
   private String description;
 
   @OneToMany(mappedBy = "role")
-  private List<Permission> permissions;
+  private List<RolePermissionRef> rolePermissionRefs;
 
   @OneToMany(mappedBy = "role")
   @JsonBackReference
   private List<UserRoleRef> userRoleRefs;
+
+  public List<RolePermissionRef> getRolePermissionRefs() {
+    return rolePermissionRefs;
+  }
+
+  public void setRolePermissionRefs(
+      List<RolePermissionRef> rolePermissionRefs) {
+    this.rolePermissionRefs = rolePermissionRefs;
+  }
 
   public List<UserRoleRef> getUserRoleRefs() {
     return userRoleRefs;
@@ -50,14 +59,6 @@ public class Role implements Serializable {
 
   public void setCode(String code) {
     this.code = code;
-  }
-
-  public List<Permission> getPermissions() {
-    return permissions;
-  }
-
-  public void setPermissions(List<Permission> permissions) {
-    this.permissions = permissions;
   }
 
   public Integer getId() {

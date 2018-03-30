@@ -4,11 +4,12 @@ import com.xg.annotation.Perm;
 import com.xg.annotation.Perms;
 import com.xg.annotation.Res;
 import com.xg.api.model.uc.Permission;
+import com.xg.api.model.uc.PermissionResourceRef;
 import com.xg.repository.PermissionRepository;
+import com.xg.repository.PermissionResourceRefRepository;
 import com.xg.repository.ResourceRepository;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
@@ -35,6 +36,8 @@ public class InitPermissionsAndResources {
 
   @Resource private PermissionRepository permissionRepository;
 
+  @Resource private PermissionResourceRefRepository permissionResourceRefRepository;
+
   private Permission getPermission(String name) {
     Permission permission = permissionRepository.findByName(name);
     if (permission == null) {
@@ -57,6 +60,7 @@ public class InitPermissionsAndResources {
                 Permission parent = getPermission(perm.parent());
                 permission.setPermission(parent);
               }
+              permissionRepository.save(permission);
               requestMappingInfo
                   .getPatternsCondition()
                   .getPatterns()
@@ -67,20 +71,23 @@ public class InitPermissionsAndResources {
                             .getMethods()
                             .forEach(
                                 (requestMethod) -> {
-                                  com.xg.api.model.uc.Resource resource =
-                                      resourceRepository.findByUrlAndMethod(
-                                          pattern, HttpMethod.resolve(requestMethod.name()));
-                                  List<com.xg.api.model.uc.Resource> list =
-                                      permission.getResources();
-                                  if (list == null) {
-                                    list = new ArrayList<>();
+                                  PermissionResourceRef permissionResourceRef =
+                                      permissionResourceRefRepository
+                                          .findByPermissionAndResourceUrlAndResourceMethod(
+                                              permission,
+                                              pattern,
+                                              HttpMethod.resolve(requestMethod.name()));
+                                  if (permissionResourceRef == null) {
+                                    com.xg.api.model.uc.Resource resource =
+                                        resourceRepository.findByUrlAndMethod(
+                                            pattern, HttpMethod.resolve(requestMethod.name()));
+                                    permissionResourceRef = new PermissionResourceRef();
+                                    permissionResourceRef.setResource(resource);
+                                    permissionResourceRef.setPermission(permission);
+                                    permissionResourceRefRepository.save(permissionResourceRef);
                                   }
-                                  list.add(resource);
-                                  list = new ArrayList<>(new HashSet<>(list));
-                                  permission.setResources(list);
                                 });
                       });
-              permissionRepository.save(permission);
             }
           }
         });

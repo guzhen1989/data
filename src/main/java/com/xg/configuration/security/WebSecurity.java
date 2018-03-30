@@ -1,9 +1,9 @@
 package com.xg.configuration.security;
 
 import com.xg.configuration.security.service.AjaxAwareLoginUrlAuthenticationEntryPoint;
-import com.xg.configuration.security.service.JsonSimpleUrlAuthenticationFailureHandler;
-import com.xg.configuration.security.service.JsonSimpleUrlAuthenticationSuccessHandler;
-import com.xg.configuration.security.service.JsonUsernamePasswordAuthenticationFilter;
+import com.xg.configuration.security.service.AjaxAwareSimpleUrlAuthenticationFailureHandler;
+import com.xg.configuration.security.service.AjaxAwareSimpleUrlAuthenticationSuccessHandler;
+import com.xg.configuration.security.service.AjaxAwareUsernamePasswordAuthenticationFilter;
 import com.xg.configuration.security.service.SecurityInterceptorFilter;
 import com.xg.configuration.security.service.UserDetailService;
 import javax.annotation.Resource;
@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
-import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
@@ -51,7 +50,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         .disable();
     http.addFilterBefore(securityInterceptorFilter, FilterSecurityInterceptor.class);
     http.addFilterAt(
-        jsonUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        ajaxAwareUsernamePasswordAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
   }
 
   @Override
@@ -60,12 +59,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  JsonUsernamePasswordAuthenticationFilter jsonUsernamePasswordAuthenticationFilter()
+  AjaxAwareUsernamePasswordAuthenticationFilter ajaxAwareUsernamePasswordAuthenticationFilter()
       throws Exception {
-    JsonUsernamePasswordAuthenticationFilter filter =
-        new JsonUsernamePasswordAuthenticationFilter();
-    filter.setAuthenticationSuccessHandler(new JsonSimpleUrlAuthenticationSuccessHandler());
-    filter.setAuthenticationFailureHandler(new JsonSimpleUrlAuthenticationFailureHandler());
+    AjaxAwareUsernamePasswordAuthenticationFilter filter =
+        new AjaxAwareUsernamePasswordAuthenticationFilter();
+    filter.setAuthenticationSuccessHandler(new AjaxAwareSimpleUrlAuthenticationSuccessHandler());
+    filter.setAuthenticationFailureHandler(new AjaxAwareSimpleUrlAuthenticationFailureHandler());
     filter.setFilterProcessesUrl(SecurityConfiguration.LOGIN_URI);
     // 这句很关键，重用WebSecurityConfigurerAdapter配置的AuthenticationManager，不然要自己组装AuthenticationManager
     filter.setAuthenticationManager(authenticationManagerBean());

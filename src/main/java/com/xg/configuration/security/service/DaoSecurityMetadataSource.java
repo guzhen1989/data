@@ -1,12 +1,15 @@
 package com.xg.configuration.security.service;
 
 import com.xg.api.model.uc.Permission;
+import com.xg.api.model.uc.PermissionResourceRef;
 import com.xg.api.model.uc.Role;
+import com.xg.api.model.uc.RolePermissionRef;
 import com.xg.repository.RoleRepository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.context.ApplicationContext;
@@ -76,14 +79,23 @@ public class DaoSecurityMetadataSource implements SecurityMetadataSource {
   }
 
   /** 加载权限表中所有权限 */
-  private void reloadResourceDefine() {
+  public void reloadResourceDefine() {
     HashMap<com.xg.api.model.uc.Resource, Collection<ConfigAttribute>> map = new HashMap<>();
     List<Role> roles = roleRepository.findAll();
     for (Role role : roles) {
       ConfigAttribute cfg = new SecurityConfig(role.getCode());
-      List<Permission> permissions = role.getPermissions();
+      List<Permission> permissions =
+          role.getRolePermissionRefs()
+              .stream()
+              .map((RolePermissionRef::getPermission))
+              .collect(Collectors.toList());
       for (Permission permission : permissions) {
-        List<com.xg.api.model.uc.Resource> resources = permission.getResources();
+        List<com.xg.api.model.uc.Resource> resources =
+            permission
+                .getPermissionResourceRefs()
+                .stream()
+                .map(PermissionResourceRef::getResource)
+                .collect(Collectors.toList());
         for (com.xg.api.model.uc.Resource resource : resources) {
           Collection<ConfigAttribute> roleCollection = map.get(resource);
           if (CollectionUtils.isEmpty(roleCollection)) {

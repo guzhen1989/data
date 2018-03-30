@@ -1,5 +1,6 @@
 package com.xg.api.model.uc;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
@@ -11,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import org.springframework.http.HttpMethod;
 
 /**
@@ -20,7 +22,7 @@ import org.springframework.http.HttpMethod;
  * @date 2018/3/19
  */
 @Entity
-public class Resource implements Serializable {
+public class Resource extends BaseModel {
   @Id @GeneratedValue private Integer id;
 
   @Column(length = 32)
@@ -32,9 +34,18 @@ public class Resource implements Serializable {
   @Enumerated(EnumType.STRING)
   private HttpMethod method;
 
-  @JsonIgnore
-  @ManyToMany(mappedBy = "resources")
-  private List<Permission> permissions;
+  @OneToMany(mappedBy = "resource")
+  @JsonBackReference
+  private List<PermissionResourceRef> permissionResourceRefs;
+
+  public List<PermissionResourceRef> getPermissionResourceRefs() {
+    return permissionResourceRefs;
+  }
+
+  public void setPermissionResourceRefs(
+      List<PermissionResourceRef> permissionResourceRefs) {
+    this.permissionResourceRefs = permissionResourceRefs;
+  }
 
   @Override
   public boolean equals(Object o) {
@@ -90,13 +101,5 @@ public class Resource implements Serializable {
 
   public void setMethod(HttpMethod method) {
     this.method = method;
-  }
-
-  public List<Permission> getPermissions() {
-    return permissions;
-  }
-
-  public void setPermissions(List<Permission> permissions) {
-    this.permissions = permissions;
   }
 }

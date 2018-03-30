@@ -1,6 +1,6 @@
 package com.xg.api.model.uc;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  * 权限
@@ -19,7 +20,7 @@ import javax.persistence.ManyToOne;
  * @date 2018/3/19
  */
 @Entity
-public class Permission implements Serializable {
+public class Permission extends BaseModel {
   @Id @GeneratedValue private Integer id;
 
   @Column(length = 32)
@@ -27,39 +28,34 @@ public class Permission implements Serializable {
 
   @Column private String description;
 
-  @JsonIgnore
-  @ManyToOne
-  @JoinColumn(name = "role_id", referencedColumnName = "id")
-  private Role role;
+  @OneToMany(mappedBy = "permission")
+  @JsonBackReference
+  private List<RolePermissionRef> rolePermissionRefs;
 
-  @ManyToMany
-  @JoinTable(
-    name = "permission_resource_ref",
-    joinColumns = {@JoinColumn(name = "permission_id", referencedColumnName = "id")},
-    inverseJoinColumns = {@JoinColumn(name = "resource_id", referencedColumnName = "id")}
-  )
-  private List<Resource> resources;
+  @OneToMany(mappedBy = "permission")
+  private List<PermissionResourceRef> permissionResourceRefs;
 
   @ManyToOne
-  @JoinColumn(name = "permission_id",referencedColumnName = "id")
+  @JoinColumn(name = "permission_id", referencedColumnName = "id")
   private Permission permission;
 
-  public Permission getPermission() {
-    return permission;
+  public List<RolePermissionRef> getRolePermissionRefs() {
+    return rolePermissionRefs;
   }
 
-  public void setPermission(Permission permission) {
-    this.permission = permission;
+  public void setRolePermissionRefs(
+      List<RolePermissionRef> rolePermissionRefs) {
+    this.rolePermissionRefs = rolePermissionRefs;
   }
 
-  public List<Resource> getResources() {
-    return resources;
+  public List<PermissionResourceRef> getPermissionResourceRefs() {
+    return permissionResourceRefs;
   }
 
-  public void setResources(List<Resource> resources) {
-    this.resources = resources;
+  public void setPermissionResourceRefs(
+      List<PermissionResourceRef> permissionResourceRefs) {
+    this.permissionResourceRefs = permissionResourceRefs;
   }
-
 
   public String getDescription() {
     return description;
@@ -85,11 +81,11 @@ public class Permission implements Serializable {
     this.name = name;
   }
 
-  public Role getRole() {
-    return role;
+  public Permission getPermission() {
+    return permission;
   }
 
-  public void setRole(Role role) {
-    this.role = role;
+  public void setPermission(Permission permission) {
+    this.permission = permission;
   }
 }

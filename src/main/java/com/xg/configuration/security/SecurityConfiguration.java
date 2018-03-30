@@ -1,13 +1,9 @@
 package com.xg.configuration.security;
 
 import com.xg.configuration.security.service.AjaxAwareLoginUrlAuthenticationEntryPoint;
-import com.xg.configuration.security.service.JsonUsernamePasswordAuthenticationFilter;
-import javax.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * 安全配置

@@ -1,5 +1,6 @@
 package com.xg.api.model.uc;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -20,7 +21,7 @@ import javax.persistence.OneToMany;
  * @date 2018/3/19
  */
 @Entity
-public class User implements Serializable{
+public class User extends BaseModel{
   @Id
   @GeneratedValue
   private Integer id;
@@ -29,6 +30,7 @@ public class User implements Serializable{
   private String username;
 
   @Column(length = 64)
+  @JsonIgnore
   private String password;
 
   @OneToMany(mappedBy = "user")
