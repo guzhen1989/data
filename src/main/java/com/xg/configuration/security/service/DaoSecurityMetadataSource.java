@@ -84,6 +84,9 @@ public class DaoSecurityMetadataSource implements SecurityMetadataSource {
     List<Role> roles = roleRepository.findAll();
     for (Role role : roles) {
       ConfigAttribute cfg = new SecurityConfig(role.getCode());
+      if(CollectionUtils.isEmpty(role.getRolePermissionRefs())){
+        continue;
+      }
       List<Permission> permissions =
           role.getRolePermissionRefs()
               .stream()
