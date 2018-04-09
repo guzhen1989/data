@@ -1,16 +1,14 @@
 package com.xg.api.model.uc;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serializable;
+import com.xg.api.model.BaseModel;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import lombok.Data;
 
 /**
  * 角色
@@ -18,6 +16,7 @@ import javax.persistence.OneToMany;
  * @date 2018/3/19
  */
 @Entity
+@Data
 public class Role extends BaseModel {
   @Id
   @GeneratedValue
@@ -35,54 +34,4 @@ public class Role extends BaseModel {
   @OneToMany(mappedBy = "role")
   @JsonBackReference
   private List<UserRoleRef> userRoleRefs;
-
-  public List<RolePermissionRef> getRolePermissionRefs() {
-    return rolePermissionRefs;
-  }
-
-  public void setRolePermissionRefs(
-      List<RolePermissionRef> rolePermissionRefs) {
-    this.rolePermissionRefs = rolePermissionRefs;
-  }
-
-  public List<UserRoleRef> getUserRoleRefs() {
-    return userRoleRefs;
-  }
-
-  public void setUserRoleRefs(List<UserRoleRef> userRoleRefs) {
-    this.userRoleRefs = userRoleRefs;
-  }
-
-  public String getCode() {
-    return code;
-  }
-
-  public void setCode(String code) {
-    this.code = code;
-  }
-
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
 }

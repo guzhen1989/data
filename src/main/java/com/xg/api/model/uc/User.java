@@ -1,18 +1,14 @@
 package com.xg.api.model.uc;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.io.Serializable;
+import com.xg.api.model.BaseModel;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import lombok.Data;
 
 /**
  * 用户
@@ -21,7 +17,8 @@ import javax.persistence.OneToMany;
  * @date 2018/3/19
  */
 @Entity
-public class User extends BaseModel{
+@Data
+public class User extends BaseModel {
   @Id
   @GeneratedValue
   private Integer id;
@@ -36,35 +33,4 @@ public class User extends BaseModel{
   @OneToMany(mappedBy = "user")
   private List<UserRoleRef> userRoleRefs;
 
-  public List<UserRoleRef> getUserRoleRefs() {
-    return userRoleRefs;
-  }
-
-  public void setUserRoleRefs(List<UserRoleRef> userRoleRefs) {
-    this.userRoleRefs = userRoleRefs;
-  }
-
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  public String getUsername() {
-    return username;
-  }
-
-  public void setUsername(String username) {
-    this.username = username;
-  }
 }

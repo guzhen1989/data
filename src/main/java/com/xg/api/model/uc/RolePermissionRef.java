@@ -9,6 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 角色权限关系
@@ -18,6 +21,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"role_id","permission_id"})})
+@Data
 public class RolePermissionRef {
 
   @Id
@@ -32,29 +36,4 @@ public class RolePermissionRef {
   @ManyToOne
   @JoinColumn(name = "permission_id",referencedColumnName = "id")
   private Permission permission;
-
-
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public Role getRole() {
-    return role;
-  }
-
-  public void setRole(Role role) {
-    this.role = role;
-  }
-
-  public Permission getPermission() {
-    return permission;
-  }
-
-  public void setPermission(Permission permission) {
-    this.permission = permission;
-  }
 }

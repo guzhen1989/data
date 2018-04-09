@@ -9,6 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * 权限资源关系
@@ -18,6 +21,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"permission_id","resource_id"})})
+@Data
 public class PermissionResourceRef implements Serializable{
   @Id
   @GeneratedValue
@@ -29,28 +33,4 @@ public class PermissionResourceRef implements Serializable{
 
   @ManyToOne
   private Resource resource;
-
-  public Integer getId() {
-    return id;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
-
-  public Permission getPermission() {
-    return permission;
-  }
-
-  public void setPermission(Permission permission) {
-    this.permission = permission;
-  }
-
-  public Resource getResource() {
-    return resource;
-  }
-
-  public void setResource(Resource resource) {
-    this.resource = resource;
-  }
 }
