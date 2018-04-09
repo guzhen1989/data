@@ -23,6 +23,10 @@ spring:
     job-store-type: jdbc
     jdbc:
       initialize-schema: always
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
 logging:
   level:
     org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: debug
