@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 权限
@@ -20,6 +21,7 @@ import lombok.Data;
  */
 @Entity
 @Data
+@EqualsAndHashCode(callSuper=true)
 public class Permission extends BaseModel {
   @Id @GeneratedValue private Integer id;
 

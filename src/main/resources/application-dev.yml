@@ -1,34 +1,7 @@
 spring:
   redis:
     host: 172.16.88.47
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    open-in-view: true
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-    properties:
-      hibernate:
-        enable_lazy_load_no_trans: true
   datasource:
     username: root
     password: rjs123
     url: jdbc:mysql://172.16.88.216:3306/data?characterEncoding=UTF-8
-  session:
-    store-type: redis
-  jackson:
-    date-format: yyyy-MM-dd hh:mm:ss
-    time-zone: GMT+8
-  quartz:
-    job-store-type: jdbc
-    jdbc:
-      initialize-schema: always
-  data:
-    web:
-      pageable:
-        one-indexed-parameters: true
-logging:
-  level:
-    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: debug
-server:
-  port: 8999

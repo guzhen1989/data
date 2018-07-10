@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * 用户
@@ -18,6 +19,7 @@ import lombok.Data;
  */
 @Entity
 @Data
+@EqualsAndHashCode(callSuper=true)
 public class User extends BaseModel {
   @Id
   @GeneratedValue
