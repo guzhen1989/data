@@ -1,8 +1,11 @@
 package com.xg.service;
 
 import com.xg.api.model.stock.StockCode;
+import com.xg.api.model.stock.StockDateInfo;
+import com.xg.util.StringUtil;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -25,10 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class EastmoneyDataServiceImpl implements RemoteData {
 
-  private static final Pattern EASTMONEY_STOCK_PATTERN = Pattern.compile("(^.*)\\((\\d+)\\)$");
+  private static final String EASTMONEY_STOCK_PATTERN = "(^.*)\\((\\d+)\\)$";
 
   @Override
-  public List<StockCode> getList() {
+  public List<StockCode> getStockCodeList() {
     List<StockCode> list = new ArrayList<>();
     Connection connect = Jsoup.connect("http://quote.eastmoney.com/stocklist.html");
     Document document = null;
@@ -46,14 +49,18 @@ public class EastmoneyDataServiceImpl implements RemoteData {
       } else {
         stockCode.setExchange(StockCode.EXCHANGE_SZ);
       }
-      String text = a.text();
-      Matcher matcher = EASTMONEY_STOCK_PATTERN.matcher(text);
-      if (matcher.find()&&matcher.groupCount()>1) {
-        stockCode.setName(matcher.group(1));
-        stockCode.setCode(matcher.group(2));
+      String[] regex = StringUtil.regex(EASTMONEY_STOCK_PATTERN, a.text());
+      if (regex.length>1) {
+        stockCode.setName(regex[0]);
+        stockCode.setCode(regex[1]);
         list.add(stockCode);
       }
     }
     return list;
+  }
+
+  @Override
+  public List<StockDateInfo> getDateInfoList(StockCode stockCode, Date start, Date end) {
+    throw new UnsupportedOperationException("不支持");
   }
 }

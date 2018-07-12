@@ -4,11 +4,11 @@ import com.xg.api.model.stock.StockCode;
 import com.xg.repository.StockCodeRepository;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import javax.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional
+@Slf4j
 public class StockCodeService {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(StockCodeService.class);
 
   private static final Date DEFAULT_DATA_DATE;
 
@@ -33,6 +32,17 @@ public class StockCodeService {
   }
 
   @Resource private StockCodeRepository stockCodeRepository;
+
+  public List<StockCode> queryAll(){
+    return stockCodeRepository.findAll();
+  }
+  public void save(StockCode stockCode){
+     stockCodeRepository.save(stockCode);
+  }
+
+  public Optional<StockCode> findById(String code){
+    return stockCodeRepository.findById(code);
+  }
 
   public void syncStockCode(StockCode stockCode) {
     Optional<StockCode> optional = stockCodeRepository.findById(stockCode.getCode());
