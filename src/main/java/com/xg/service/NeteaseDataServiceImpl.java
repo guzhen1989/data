@@ -5,9 +5,7 @@ import com.xg.api.model.stock.StockDateInfo;
 import com.xg.feign.NeteaseDownloadApi;
 import com.xg.util.CsvUtil;
 import com.xg.util.DateFormatUtil;
-import com.xg.util.StringUtil;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -17,13 +15,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,48 +36,6 @@ public class NeteaseDataServiceImpl implements RemoteData {
    * http://tieba.baidu.com/p/4907062727
    * @return
    */
-  /**
-   * 标题：【网易股票数据api】#集搜客GooSeeker数据集开放目录#
-   分类：API
-   关键词：股票,实时数据,API接口
-   摘要：可以查询单个、多个股票、历史数据、财务指标等等
-
-   更多信息：
-   一、单个股票实时查询
-   【例子】工商银行股票代码0601398，股票代码之间使用逗号分隔，股票代码请去网易财经网查询。
-   注：新浪和腾讯都用sh、sz来区分上证和深证，网易用的1和0来区分。
-
-   http://api.money.126.net/data/feed/0601398,money.api
-
-
-   二、多个股票实时查询
-   http://api.money.126.net/data/feed/0601398,1000001,1000881,money.api
-
-
-   三、历史数据下载（CSV格式）
-   下面是获取工商银行0601398，从2008年07月20日到2015年05月08日之间的历史数据，文件为CSV格式
-   http://quotes.money.163.com/service/chddata.html?code=0601398&start=20000720&end=20150508
-
-
-   四、财务指标下载（CSV格式）
-   http://quotes.money.163.com/service/zycwzb_601398.html?type=report
-
-
-   五、利润表下载（CSV格式）
-   http://quotes.money.163.com/service/lrb_601398.html
-
-
-   六、现金流表（CSV格式）
-   http://quotes.money.163.com/service/xjllb_601398.html
-
-
-   * @return
-   */
-
-  @Override
-  public List<StockCode> getStockCodeList() {
-    throw new UnsupportedOperationException("不支持");
-  }
 
   @Override
   public List<StockDateInfo> getDateInfoList(StockCode stockCode, Date start, Date end) {
@@ -132,20 +82,63 @@ public class NeteaseDataServiceImpl implements RemoteData {
       } catch (ParseException e) {
         throw new RuntimeException("获取时间失败");
       }
-      stockDateInfo.setOpenPrice(new BigDecimal(csvRecord.get("开盘价")));
-      stockDateInfo.setClosePrice(new BigDecimal(csvRecord.get("收盘价")));
-      stockDateInfo.setLowPrice(new BigDecimal(csvRecord.get("最低价")));
-      stockDateInfo.setHighPrice(new BigDecimal(csvRecord.get("最高价")));
-      stockDateInfo.setYestClosePrice(new BigDecimal(csvRecord.get("前收盘")));
-      stockDateInfo.setChangeMoney(new BigDecimal(csvRecord.get("涨跌额")));
-      stockDateInfo.setChangeRate(new BigDecimal(csvRecord.get("涨跌幅")));
-      stockDateInfo.setTurnoverRate(new BigDecimal(csvRecord.get("换手率")));
-      stockDateInfo.setVolumeCount(Long.parseLong(csvRecord.get("成交量")));
-      stockDateInfo.setVolumeMoney(new BigDecimal(csvRecord.get("成交金额")));
-      stockDateInfo.setTotalValue(new BigDecimal(csvRecord.get("总市值")));
-      stockDateInfo.setCirculationMarketValue(new BigDecimal(csvRecord.get("流通市值")));
+      stockDateInfo.setOpenPrice((StringUtils.isEmpty(csvRecord.get("开盘价"))||"None".equalsIgnoreCase(csvRecord.get("开盘价")))?BigDecimal.ZERO:new BigDecimal(csvRecord.get("开盘价")));
+      stockDateInfo.setClosePrice((StringUtils.isEmpty(csvRecord.get("收盘价"))||"None".equalsIgnoreCase(csvRecord.get("收盘价")))?BigDecimal.ZERO:new BigDecimal(csvRecord.get("收盘价")));
+      stockDateInfo.setLowPrice((StringUtils.isEmpty(csvRecord.get("最低价"))||"None".equalsIgnoreCase(csvRecord.get("最低价")))?BigDecimal.ZERO:new BigDecimal(csvRecord.get("最低价")));
+      stockDateInfo.setHighPrice((StringUtils.isEmpty(csvRecord.get("最高价"))||"None".equalsIgnoreCase(csvRecord.get("最高价")))?BigDecimal.ZERO:new BigDecimal(csvRecord.get("最高价")));
+      stockDateInfo.setYestClosePrice((StringUtils.isEmpty(csvRecord.get("前收盘"))||"None".equalsIgnoreCase(csvRecord.get("前收盘")))?BigDecimal.ZERO:new BigDecimal(csvRecord.get("前收盘")));
+      stockDateInfo.setChangeMoney((StringUtils.isEmpty(csvRecord.get("涨跌额"))||"None".equalsIgnoreCase(csvRecord.get("涨跌额")))?BigDecimal.ZERO:new BigDecimal(csvRecord.get("涨跌额")));
+      stockDateInfo.setChangeRate((StringUtils.isEmpty(csvRecord.get("涨跌幅"))||"None".equalsIgnoreCase(csvRecord.get("涨跌幅")))?BigDecimal.ZERO:new BigDecimal(csvRecord.get("涨跌幅")));
+      stockDateInfo.setTurnoverRate((StringUtils.isEmpty(csvRecord.get("换手率"))||"None".equalsIgnoreCase(csvRecord.get("换手率")))?BigDecimal.ZERO:new BigDecimal(csvRecord.get("换手率")));
+      stockDateInfo.setVolumeCount((StringUtils.isEmpty(csvRecord.get("成交量"))||"None".equalsIgnoreCase(csvRecord.get("成交量")))?0L:Long.parseLong(csvRecord.get("成交量")));
+      stockDateInfo.setVolumeMoney((StringUtils.isEmpty(csvRecord.get("成交金额"))||"None".equalsIgnoreCase(csvRecord.get("成交金额")))?BigDecimal.ZERO:new BigDecimal(csvRecord.get("成交金额")));
+      stockDateInfo.setTotalValue((StringUtils.isEmpty(csvRecord.get("总市值"))||"None".equalsIgnoreCase(csvRecord.get("总市值")))?BigDecimal.ZERO:new BigDecimal(csvRecord.get("总市值")));
+      stockDateInfo.setCirculationMarketValue((StringUtils.isEmpty(csvRecord.get("流通市值"))||"None".equalsIgnoreCase(csvRecord.get("流通市值")))?BigDecimal.ZERO:new BigDecimal(csvRecord.get("流通市值")));
       result.add(stockDateInfo);
     }
     return result;
+  }
+
+  /**
+   * 标题：【网易股票数据api】#集搜客GooSeeker数据集开放目录#
+   分类：API
+   关键词：股票,实时数据,API接口
+   摘要：可以查询单个、多个股票、历史数据、财务指标等等
+
+   更多信息：
+   一、单个股票实时查询
+   【例子】工商银行股票代码0601398，股票代码之间使用逗号分隔，股票代码请去网易财经网查询。
+   注：新浪和腾讯都用sh、sz来区分上证和深证，网易用的1和0来区分。
+
+   http://api.money.126.net/data/feed/0601398,money.api
+
+
+   二、多个股票实时查询
+   http://api.money.126.net/data/feed/0601398,1000001,1000881,money.api
+
+
+   三、历史数据下载（CSV格式）
+   下面是获取工商银行0601398，从2008年07月20日到2015年05月08日之间的历史数据，文件为CSV格式
+   http://quotes.money.163.com/service/chddata.html?code=0601398&start=20000720&end=20150508
+
+
+   四、财务指标下载（CSV格式）
+   http://quotes.money.163.com/service/zycwzb_601398.html?type=report
+
+
+   五、利润表下载（CSV格式）
+   http://quotes.money.163.com/service/lrb_601398.html
+
+
+   六、现金流表（CSV格式）
+   http://quotes.money.163.com/service/xjllb_601398.html
+
+
+   * @return
+   */
+
+  @Override
+  public List<StockCode> getStockCodeList() {
+    throw new UnsupportedOperationException("不支持");
   }
 }

@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -24,8 +25,10 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class StockDateInfo extends BaseModel{
-  /** 股票代码 */
   @Id
+  @GeneratedValue
+  private Integer id;
+  /** 股票代码 */
   private String code;
   /** 名称 */
   private String name;

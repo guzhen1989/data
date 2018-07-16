@@ -50,7 +50,8 @@ public class RemoteDataJob {
     log.info("同步stock code结束！");
   }
 
-  @Scheduled(cron = "0 30 2 * * ?")
+//  @Scheduled(cron = "0 30 2 * * ?")
+  @Scheduled(fixedDelay = 5000L)
   public void syncStockDateInfo(){
     log.info("同步StockDateInfo开始...");
     boolean cont=false;
